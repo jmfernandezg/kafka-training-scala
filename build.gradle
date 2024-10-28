@@ -1,0 +1,20 @@
+plugins {
+    id 'scala'
+    id 'org.springframework.boot' version '2.7.5'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+}
+
+subprojects {
+    apply plugin: 'scala'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        implementation 'org.scala-lang:scala-library:2.13.10'
+        testImplementation 'org.scalatest:scalatest_2.13:3.2.14'
+    }
+}
