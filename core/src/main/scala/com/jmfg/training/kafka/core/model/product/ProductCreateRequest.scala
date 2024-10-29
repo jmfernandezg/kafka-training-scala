@@ -1,8 +1,9 @@
 package com.jmfg.training.kafka.core.model.product
 
-import java.util.UUID
+import jakarta.persistence.*
+
 import java.time.LocalDateTime
-import jakarta.persistence._
+import java.util.UUID
 
 @Entity
 class ProductCreateRequest {
@@ -12,7 +13,11 @@ class ProductCreateRequest {
   @Column(nullable = false)
   var createdAt: LocalDateTime = LocalDateTime.now()
 
-  @OneToOne(mappedBy = "productCreateRequest", cascade = Array(CascadeType.ALL), fetch = FetchType.LAZY)
+  @OneToOne(
+    mappedBy = "productCreateRequest",
+    cascade = Array(CascadeType.ALL),
+    fetch = FetchType.LAZY
+  )
   var product: Product = _
 
   @OneToOne(cascade = Array(CascadeType.ALL), fetch = FetchType.LAZY)

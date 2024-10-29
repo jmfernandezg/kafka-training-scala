@@ -1,5 +1,5 @@
 rootProject.name = 'kafka-training'
 include 'core'
-include 'service'
+include 'saga'
 include 'consumer'
 include 'producer'

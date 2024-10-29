@@ -7,5 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 class ProducerApplication
 
 object ProducerApplication extends App {
-  SpringApplication.run(classOf[ProducerApplication], "--spring.profiles.active=producer")
+  SpringApplication.run(
+    classOf[ProducerApplication],
+    "--spring.profiles.active=producer"
+  )
 }

@@ -1,7 +1,8 @@
 package com.jmfg.training.kafka.core.model.transfer
 
+import jakarta.persistence.*
+
 import java.util.UUID
-import jakarta.persistence._
 
 @Entity
 class TransferRequest {

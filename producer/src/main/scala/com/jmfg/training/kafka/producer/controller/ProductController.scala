@@ -1,16 +1,12 @@
 package com.jmfg.training.kafka.producer.controller
 
-
 import com.jmfg.training.kafka.producer.publisher.ProductPublisher
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.{GetMapping, PathVariable, RequestMapping, RestController}
 
 @RestController
 @RequestMapping("/products")
-class ProductController @Autowired()(productPublisher: ProductPublisher) {
+class ProductController @Autowired() (productPublisher: ProductPublisher) {
 
   @GetMapping("/{id}")
   def getProductById(@PathVariable id: String): String = {

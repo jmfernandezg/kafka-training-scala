@@ -1,9 +1,6 @@
 package com.jmfg.training.kafka.consumer.repository
 
-import com.jmfg.training.kafka.core.model.transfer.DepositRequestedEvent
-import com.jmfg.training.kafka.core.model.transfer.Transfer
-import com.jmfg.training.kafka.core.model.transfer.TransferRequest
-import com.jmfg.training.kafka.core.model.transfer.WithdrawalRequestedEvent
+import com.jmfg.training.kafka.core.model.transfer.{DepositRequestedEvent, Transfer, TransferRequest, WithdrawalRequestedEvent}
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 

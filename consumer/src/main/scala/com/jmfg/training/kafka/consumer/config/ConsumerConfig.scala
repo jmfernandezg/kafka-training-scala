@@ -3,11 +3,9 @@ package com.jmfg.training.kafka.consumer.config
 import com.jmfg.training.kafka.core.model.product.ProductCreatedEvent
 import org.apache.kafka.clients.consumer.ConsumerConfig.*
 import org.apache.kafka.clients.producer.ProducerConfig
-import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.Configuration
+import org.springframework.boot.autoconfigure.domain.EntityScan
+import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
@@ -15,10 +13,9 @@ import org.springframework.kafka.core.*
 import org.springframework.kafka.listener.ContainerProperties
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.DefaultUriBuilderFactory
-import org.springframework.boot.autoconfigure.domain.EntityScan
+
 import java.util
 import scala.collection.mutable
-import scala.collection.mutable.HashMap
 
 @Configuration
 @EnableKafka
@@ -66,6 +63,17 @@ class ConsumerConfig {
   private var trustedPackages: String = _
 
   @Bean
+  def kafkaListenerContainerFactory()
+      : ConcurrentKafkaListenerContainerFactory[String, String] = {
+    val factory = new ConcurrentKafkaListenerContainerFactory[String, String]()
+    factory.setConsumerFactory(consumerFactory())
+    factory.getContainerProperties.setAckMode(
+      ContainerProperties.AckMode.MANUAL
+    )
+    factory
+  }
+
+  @Bean
   def consumerFactory(): ConsumerFactory[String, String] = {
     val props = new util.HashMap[String, Object]()
     props.put(BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
@@ -77,17 +85,6 @@ class ConsumerConfig {
     props.put("spring.deserializer.key.delegate.class", keyDelegateClass)
     props.put("spring.deserializer.value.delegate.class", valueDelegateClass)
     new DefaultKafkaConsumerFactory[String, String](props)
-  }
-
-  @Bean
-  def kafkaListenerContainerFactory()
-      : ConcurrentKafkaListenerContainerFactory[String, String] = {
-    val factory = new ConcurrentKafkaListenerContainerFactory[String, String]()
-    factory.setConsumerFactory(consumerFactory())
-    factory.getContainerProperties.setAckMode(
-      ContainerProperties.AckMode.MANUAL
-    )
-    factory
   }
 
   @Bean

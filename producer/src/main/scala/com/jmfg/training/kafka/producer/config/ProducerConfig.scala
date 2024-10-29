@@ -1,20 +1,16 @@
 package com.jmfg.training.kafka.producer.config
 
 import com.jmfg.training.kafka.core.model.product.ProductCreatedEvent
-import com.jmfg.training.kafka.core.model.transfer.DepositRequestedEvent
-import com.jmfg.training.kafka.core.model.transfer.Transfer
-import com.jmfg.training.kafka.core.model.transfer.WithdrawalRequestedEvent
+import com.jmfg.training.kafka.core.model.transfer.{
+  DepositRequestedEvent,
+  WithdrawalRequestedEvent
+}
 import org.apache.kafka.clients.admin.NewTopic
-import org.apache.kafka.clients.producer.KafkaProducer
-import org.apache.kafka.clients.producer.ProducerConfig
-import org.apache.kafka.common.serialization.StringSerializer
-import org.springframework.beans.factory.annotation.Value
+import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig}
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.kafka.config.TopicBuilder
-import org.springframework.kafka.core.KafkaTemplate
-import org.springframework.kafka.core.ProducerFactory
+import org.springframework.kafka.core.{KafkaTemplate, ProducerFactory}
 import org.springframework.kafka.transaction.KafkaTransactionManager
 
 import java.util.Properties
@@ -36,7 +32,6 @@ class ProducerConfig {
   private var depositMoneyTopicName: String = _
   private var withdrawMoneyTopicName: String = _
   private var transferRequestTopicName: String = _
-
 
   @Bean
   def kafkaProducer(): KafkaProducer[String, String] = {

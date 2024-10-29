@@ -3,5 +3,5 @@ dependencies {
 }
 
 tasks.named('bootJar').configure {
-            enabled = false
+    enabled = false
 }
