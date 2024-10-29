@@ -1,0 +1,10 @@
+
+
+
+###
+
+PRODUCER non-keyed-json-message
+topic: product-created-events-topic
+{
+    "type": "my_test_event-{{random.number}}"
+}
