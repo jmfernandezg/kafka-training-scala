@@ -1,11 +1,14 @@
 package com.jmfg.training.kafka.core.service
 
-import com.jmfg.training.kafka.core.model.transfer.{Transfer, TransferRequest, DepositRequestedEvent, WithdrawalRequestedEvent}
+import com.jmfg.training.kafka.core.model.transfer.DepositRequestedEvent
+import com.jmfg.training.kafka.core.model.transfer.Transfer
+import com.jmfg.training.kafka.core.model.transfer.TransferRequest
+import com.jmfg.training.kafka.core.model.transfer.WithdrawalRequestedEvent
 
 trait TransferService {
-  def handleTransfer(transferRequest: TransferRequest): Transfer
+  def handleTransfer(transferRequest: TransferRequest): Unit
 
-  def handleDeposit(depositRequestEvent: DepositRequestedEvent): Boolean
+  def handleDeposit(depositRequestEvent: DepositRequestedEvent): Unit
 
-  def handleWithdrawal(withdrawalRequestEvent: WithdrawalRequestedEvent): Boolean
+  def handleWithdrawal(withdrawalRequestEvent: WithdrawalRequestedEvent): Unit
 }

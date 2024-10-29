@@ -7,5 +7,5 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 class ConsumerApplication
 
 object ConsumerApplication extends App {
-  SpringApplication.run(classOf[ConsumerApplication], args: _*)
+  SpringApplication.run(classOf[ConsumerApplication], "--spring.profiles.active=consumer")
 }

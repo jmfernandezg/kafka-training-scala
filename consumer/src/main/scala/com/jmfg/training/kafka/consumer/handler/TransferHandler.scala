@@ -2,10 +2,12 @@ package com.jmfg.training.kafka.consumer.handler
 
 import com.jmfg.training.kafka.consumer.repository.DepositRequestedEventRepository
 import com.jmfg.training.kafka.core.exceptions.RetryableException
-import com.jmfg.training.kafka.core.model.transfer.{DepositRequestedEvent, WithdrawalRequestedEvent}
+import com.jmfg.training.kafka.core.model.transfer.DepositRequestedEvent
+import com.jmfg.training.kafka.core.model.transfer.WithdrawalRequestedEvent
 import com.jmfg.training.kafka.core.service.TransferService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.kafka.annotation.{KafkaHandler, KafkaListener}
+import org.springframework.kafka.annotation.KafkaHandler
+import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.messaging.handler.annotation.Payload
 import org.springframework.stereotype.Component
 
@@ -26,6 +28,4 @@ class TransferHandler @Autowired() (
   def handleWithdrawal(@Payload event: WithdrawalRequestedEvent): Unit = {
     transferService.handleWithdrawal(event)
   }
-
-
 }

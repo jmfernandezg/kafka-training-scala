@@ -1,6 +1,5 @@
 package com.jmfg.training.kafka.consumer.handler
 
-import com.jmfg.training.kafka.consumer.repository.ProductRepository
 import com.jmfg.training.kafka.core.exceptions.{
   NonRetryableException,
   RetryableException

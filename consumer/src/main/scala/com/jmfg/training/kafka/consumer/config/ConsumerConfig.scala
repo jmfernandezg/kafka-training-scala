@@ -5,11 +5,9 @@ import org.apache.kafka.clients.consumer.ConsumerConfig.*
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.{
-  Bean,
-  ComponentScan,
-  Configuration
-}
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Configuration
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
@@ -17,7 +15,7 @@ import org.springframework.kafka.core.*
 import org.springframework.kafka.listener.ContainerProperties
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.DefaultUriBuilderFactory
-
+import org.springframework.boot.autoconfigure.domain.EntityScan
 import java.util
 import scala.collection.mutable
 import scala.collection.mutable.HashMap
@@ -25,9 +23,9 @@ import scala.collection.mutable.HashMap
 @Configuration
 @EnableKafka
 @EnableJpaRepositories(basePackages =
-  Array("com.jmfg.training.consumer.repository")
+  Array("com.jmfg.training.kafka.consumer.repository")
 )
-@ComponentScan(basePackages = Array("com.jmfg.training.kafka.core.model"))
+@EntityScan(basePackages = Array("com.jmfg.training.kafka.core.model"))
 class ConsumerConfig {
 
   @Value("${spring.kafka.consumer.bootstrap-servers}")
@@ -35,9 +33,6 @@ class ConsumerConfig {
 
   @Value("${spring.kafka.consumer.group-id}")
   private var groupId: String = _
-
-  @Value("${spring.kafka.consumer.auto-offset-reset}")
-  private var autoOffsetReset: String = _
 
   @Value("${spring.kafka.consumer.key-deserializer}")
   private var keyDeserializer: String = _
@@ -75,7 +70,6 @@ class ConsumerConfig {
     val props = new util.HashMap[String, Object]()
     props.put(BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
     props.put(GROUP_ID_CONFIG, groupId)
-    props.put(AUTO_OFFSET_RESET_CONFIG, autoOffsetReset)
     props.put(KEY_DESERIALIZER_CLASS_CONFIG, keyDeserializer)
     props.put(VALUE_DESERIALIZER_CLASS_CONFIG, valueDeserializer)
     props.put(ISOLATION_LEVEL_CONFIG, isolationLevel)

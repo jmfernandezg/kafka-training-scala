@@ -1,6 +1,6 @@
 package com.jmfg.training.kafka.consumer.service
 
-import com.jmfg.training.kafka.consumer.repository.ProductRepository
+import com.jmfg.training.kafka.consumer.repository.ProductCreatedEventRepository
 import com.jmfg.training.kafka.core.exceptions.{
   NonRetryableException,
   RetryableException
@@ -13,7 +13,7 @@ import org.springframework.web.client.{RestClientException, RestTemplate}
 
 @Service
 class ProductServiceImpl @Autowired() (
-                                        productCreatedEventRepository: ProductRepository,
+                                        productCreatedEventRepository: ProductCreatedEventRepository,
                                         restTemplate: RestTemplate
 ) extends ProductService {
 
