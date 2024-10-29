@@ -9,6 +9,7 @@ import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.config.TopicBuilder
@@ -19,47 +20,23 @@ import org.springframework.kafka.transaction.KafkaTransactionManager
 import java.util.Properties
 
 @Configuration
+@ConfigurationProperties(prefix = "spring.kafka.producer")
 class ProducerConfig {
-  @Value("${spring.kafka.producer.bootstrap-servers}")
   private var bootstrapServers: String = _
-
-  @Value("${spring.kafka.producer.key-serializer}")
   private var keySerializer: String = _
-
-  @Value("${spring.kafka.producer.value-serializer}")
   private var valueSerializer: String = _
-
-  @Value("${spring.kafka.producer.acks}")
   private var acks: String = _
-
-  @Value("${spring.kafka.producer.properties.delivery.timeout.ms}")
   private var deliveryTimeoutMs: String = _
-
-  @Value("${spring.kafka.producer.properties.linger.ms}")
   private var lingerMs: String = _
-
-  @Value("${spring.kafka.producer.properties.request.timeout.ms}")
   private var requestTimeoutMs: String = _
-
-  @Value("${spring.kafka.producer.properties.enable.idempotence}")
   private var enableIdempotence: String = _
-
-  @Value(
-    "${spring.kafka.producer.properties.max.in.flight.requests.per.connection}"
-  )
   private var maxInFlightRequestsPerConnection: String = _
-
-  @Value("${spring.kafka.producer.transaction-id-prefix}")
   private var transactionIdPrefix: String = _
-
-  @Value("${spring.kafka.topic.product-created-events}")
   private var productCreatedEventsTopicName: String = _
-
-  @Value("${spring.kafka.topic.deposit-money}")
   private var depositMoneyTopicName: String = _
-
-  @Value("${spring.kafka.topic.withdraw-money}")
   private var withdrawMoneyTopicName: String = _
+  private var transferRequestTopicName: String = _
+
 
   @Bean
   def kafkaProducer(): KafkaProducer[String, String] = {
@@ -141,7 +118,7 @@ class ProducerConfig {
   @Bean
   def transferRequestTopic(): NewTopic = {
     TopicBuilder
-      .name("transferRequestTopic")
+      .name(transferRequestTopicName)
       .partitions(3)
       .replicas(3)
       .config("min.insync.replicas", "2")
