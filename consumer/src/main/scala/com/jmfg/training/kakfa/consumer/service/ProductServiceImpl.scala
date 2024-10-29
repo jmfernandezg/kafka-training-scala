@@ -1,16 +1,15 @@
 package com.jmfg.training.kakfa.consumer.service
 
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Service
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.client.RestClientException
-
-import com.jmfg.training.kafka.core.model.product.{ProductCreateRequest, ProductCreatedEvent}
+import com.jmfg.training.kafka.core.exceptions.{
+  NonRetryableException,
+  RetryableException
+}
+import com.jmfg.training.kafka.core.model.product.{Product, ProductCreatedEvent}
 import com.jmfg.training.kafka.core.repository.ProductCreatedEventRepository
 import com.jmfg.training.kafka.core.service.ProductService
-import com.jmfg.training.kafka.core.exceptions.RetryableException
-
-import com.jmfg.training.kafka.core.model.product.Product
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
+import org.springframework.web.client.{RestClientException, RestTemplate}
 
 @Service
 class ProductServiceImpl @Autowired() (
@@ -18,20 +17,34 @@ class ProductServiceImpl @Autowired() (
     restTemplate: RestTemplate
 ) extends ProductService {
 
-  override def createProduct(productCreateRequest: ProductCreateRequest): ProductCreatedEvent = {
+  override def handleEvent(
+      productCreatedEvent: ProductCreatedEvent
+  ): Unit = {
+    if (productCreatedEventRepository.existsById(productCreatedEvent.id)) {
+      throw NonRetryableException(
+        s"Event with ID ${productCreatedEvent.id} is already processed."
+      )
+    } else {
+      productCreatedEvent.productCreateRequest.product = getProduct(
+        productCreatedEvent.productCreateRequest.product.id
+      )
+      productCreatedEventRepository.save(productCreatedEvent)
+    }
+  }
+
+  private def getProduct(
+      id: String
+  ) = {
     try {
-      val productResponse = restTemplate.postForObject(
-        "/products/create",
-        productCreateRequest,
+      val productResponse = restTemplate.getForObject(
+        "/products/" + id,
         classOf[Product]
       )
-      productCreateRequest.product = productResponse
-      productCreatedEventRepository.save(productResponse)
       productResponse
     } catch {
       case e: RestClientException =>
         throw RetryableException(
-          s"Failed to create product with ID ${productCreateRequest.product.id}: ${e.getMessage}"
+          s"Failed to create product with ID $id: ${e.getMessage}"
         )
     }
   }

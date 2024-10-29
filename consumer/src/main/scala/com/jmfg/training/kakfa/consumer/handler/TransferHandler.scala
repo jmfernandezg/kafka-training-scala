@@ -31,7 +31,7 @@ class TransferHandler @Autowired() (
   def processDeposit(event: DepositRequestedEvent): Unit = {
     try {
       val depositId = event.id
-      val depositResponse = transferService.deposit(event)
+      val depositResponse = transferService.handleDeposit(event)
     } catch {
       case e: Exception =>
         throw RetryableException(s"Failed to process event: ${e.getMessage}")
@@ -45,7 +45,7 @@ class TransferHandler @Autowired() (
 
   def processWithdrawal(event: WithdrawalRequestedEvent): Unit = {
     try {
-      transferService.withdrawal(event)
+      transferService.handleWithdrawal(event)
     } catch {
       case e: Exception =>
         throw RetryableException(s"Failed to process withdrawal event: ${e.getMessage}")
