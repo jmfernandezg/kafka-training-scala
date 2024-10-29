@@ -1,5 +1,6 @@
 package com.jmfg.training.kafka.consumer.handler
 
+import com.jmfg.training.kafka.consumer.repository.ProductRepository
 import com.jmfg.training.kafka.core.exceptions.{
   NonRetryableException,
   RetryableException
@@ -9,7 +10,6 @@ import com.jmfg.training.kafka.core.model.product.{
   ProductCreateRequest,
   ProductCreatedEvent
 }
-import com.jmfg.training.kafka.core.repository.ProductCreatedEventRepository
 import com.jmfg.training.kafka.core.service.ProductService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.kafka.annotation.{KafkaHandler, KafkaListener}

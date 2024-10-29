@@ -5,22 +5,22 @@ import org.apache.kafka.clients.consumer.ConsumerConfig.*
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.{
+  Bean,
+  ComponentScan,
+  Configuration
+}
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
-import org.springframework.kafka.core.ConsumerFactory
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory
-import org.springframework.kafka.core.DefaultKafkaProducerFactory
-import org.springframework.kafka.core.KafkaTemplate
-import org.springframework.kafka.core.ProducerFactory
+import org.springframework.kafka.core.*
 import org.springframework.kafka.listener.ContainerProperties
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.DefaultUriBuilderFactory
 
-import java.util.HashMap
+import java.util
+import scala.collection.mutable
+import scala.collection.mutable.HashMap
 
 @Configuration
 @EnableKafka
@@ -72,7 +72,7 @@ class ConsumerConfig {
 
   @Bean
   def consumerFactory(): ConsumerFactory[String, String] = {
-    val props = new HashMap[String, Object]()
+    val props = new util.HashMap[String, Object]()
     props.put(BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
     props.put(GROUP_ID_CONFIG, groupId)
     props.put(AUTO_OFFSET_RESET_CONFIG, autoOffsetReset)
@@ -103,7 +103,7 @@ class ConsumerConfig {
 
   @Bean
   def producerFactory(): ProducerFactory[String, ProductCreatedEvent] = {
-    val props = new HashMap[String, Any]()
+    val props = new util.HashMap[String, Any]()
     props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
     props.put(
       ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,

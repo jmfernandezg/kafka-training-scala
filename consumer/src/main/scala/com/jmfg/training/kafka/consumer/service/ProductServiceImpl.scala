@@ -1,11 +1,11 @@
-package com.jmfg.training.kakfa.consumer.service
+package com.jmfg.training.kafka.consumer.service
 
+import com.jmfg.training.kafka.consumer.repository.ProductRepository
 import com.jmfg.training.kafka.core.exceptions.{
   NonRetryableException,
   RetryableException
 }
 import com.jmfg.training.kafka.core.model.product.{Product, ProductCreatedEvent}
-import com.jmfg.training.kafka.core.repository.ProductCreatedEventRepository
 import com.jmfg.training.kafka.core.service.ProductService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -13,8 +13,8 @@ import org.springframework.web.client.{RestClientException, RestTemplate}
 
 @Service
 class ProductServiceImpl @Autowired() (
-    productCreatedEventRepository: ProductCreatedEventRepository,
-    restTemplate: RestTemplate
+                                        productCreatedEventRepository: ProductRepository,
+                                        restTemplate: RestTemplate
 ) extends ProductService {
 
   override def handleEvent(
