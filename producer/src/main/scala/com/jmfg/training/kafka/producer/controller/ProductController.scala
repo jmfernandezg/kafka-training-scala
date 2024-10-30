@@ -1,16 +1,26 @@
 package com.jmfg.training.kafka.producer.controller
 
-import com.jmfg.training.kafka.producer.publisher.ProductPublisher
+import com.jmfg.training.kafka.core.model.product.{
+  Product,
+  ProductCreateRequest,
+  ProductCreatedEvent
+}
+import com.jmfg.training.kafka.core.publisher.ProductPublisher
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.{GetMapping, PathVariable, RequestMapping, RestController}
+import org.springframework.web.bind.annotation.{
+  PostMapping,
+  RequestBody,
+  RequestMapping,
+  RestController
+}
 
 @RestController
 @RequestMapping("/products")
 class ProductController @Autowired() (productPublisher: ProductPublisher) {
-
-  @GetMapping("/{id}")
-  def getProductById(@PathVariable id: String): String = {
-    productPublisher.publishProduct(id)
-    s"Product with ID $id has been published."
+  @PostMapping("/")
+  def create(
+      @RequestBody request: ProductCreateRequest
+  ): ProductCreatedEvent = {
+    productPublisher.sendCreate(request)
   }
 }

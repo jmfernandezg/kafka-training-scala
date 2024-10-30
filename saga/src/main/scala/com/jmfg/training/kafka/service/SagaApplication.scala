@@ -4,8 +4,8 @@ import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 
 @SpringBootApplication
-class ServiceApplication
+class SagaApplication
 
-object ServiceApplication extends App {
-  SpringApplication.run(classOf[ServiceApplication], args: _*)
+object SagaApplication extends App {
+  SpringApplication.run(classOf[SagaApplication], args: _*)
 }

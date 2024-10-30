@@ -1,7 +1,10 @@
 package com.jmfg.training.kafka.consumer.service
 
 import com.jmfg.training.kafka.consumer.repository.ProductCreatedEventRepository
-import com.jmfg.training.kafka.core.exceptions.{NonRetryableException, RetryableException}
+import com.jmfg.training.kafka.core.exceptions.{
+  NonRetryableException,
+  RetryableException
+}
 import com.jmfg.training.kafka.core.model.product.{Product, ProductCreatedEvent}
 import com.jmfg.training.kafka.core.service.ProductService
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,26 +25,25 @@ class ProductServiceImpl @Autowired() (
         s"Event with ID ${productCreatedEvent.id} is already processed."
       )
     } else {
-      productCreatedEvent.productCreateRequest.product = getProduct(
-        productCreatedEvent.productCreateRequest.product.id
+      productCreatedEvent.productCreateRequest.product = validate(
+        productCreatedEvent
       )
       productCreatedEventRepository.save(productCreatedEvent)
     }
   }
 
-  private def getProduct(
-      id: String
-  ) = {
+  private def validate(
+      productCreatedEvent: ProductCreatedEvent
+  ): Product = {
     try {
-      val productResponse = restTemplate.getForObject(
-        "/products/" + id,
+      restTemplate.getForObject(
+        s"/validate/product/${productCreatedEvent.id}",
         classOf[Product]
       )
-      productResponse
     } catch {
       case e: RestClientException =>
         throw RetryableException(
-          s"Failed to create product with ID $id: ${e.getMessage}"
+          s"Failed to get product with ID ${productCreatedEvent.id}: ${e.getMessage}"
         )
     }
   }

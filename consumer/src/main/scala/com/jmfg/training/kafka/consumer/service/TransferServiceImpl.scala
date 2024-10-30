@@ -65,13 +65,13 @@ class TransferServiceImpl @Autowired() (
   ): Unit = {
     try {
       restTemplate.postForObject(
-        "/validate/deposit",
+        "/validate/transfer",
         transferRequest,
         classOf[Void]
       )
     } catch {
       case e: HttpStatusCodeException =>
-        throw RetryableException("Failed to invoke deposit")
+        throw RetryableException("Failed to validate transfer")
     }
   }
 
@@ -85,13 +85,13 @@ class TransferServiceImpl @Autowired() (
   ): Unit = {
     try {
       restTemplate.postForObject(
-        "/validate/withdrawal",
+        "/validate/deposit",
         event,
         classOf[Void]
       )
     } catch {
       case e: HttpStatusCodeException =>
-        throw RetryableException("Failed to invoke withdrawal")
+        throw RetryableException("Failed to validate deposit")
     }
   }
 
