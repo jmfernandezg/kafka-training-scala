@@ -1,10 +1,17 @@
 package com.jmfg.training.kafka.producer.publisher
 
-import com.jmfg.training.kafka.core.model.transfer.{DepositRequestedEvent, Transfer, TransferRequest, WithdrawalRequestedEvent}
+import com.jmfg.training.kafka.core.model.transfer.{
+  DepositRequestedEvent,
+  Transfer,
+  TransferRequest,
+  WithdrawalRequestedEvent
+}
 import com.jmfg.training.kafka.core.publisher.TransferPublisher
 import org.springframework.kafka.core.KafkaTemplate
+import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+@Service
 class TransferPublisherImpl(
     kafkaTemplateDepositMoney: KafkaTemplate[
       String,
