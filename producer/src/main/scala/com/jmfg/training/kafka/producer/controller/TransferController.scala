@@ -1,11 +1,22 @@
 package com.jmfg.training.kafka.producer.controller
 
-import com.jmfg.training.kafka.core.model.transfer.{DepositRequestedEvent, Transfer, TransferRequest, WithdrawalRequestedEvent}
+import com.jmfg.training.kafka.core.model.transfer.{
+  DepositRequestedEvent,
+  Transfer,
+  TransferRequest,
+  WithdrawalRequestedEvent
+}
 import com.jmfg.training.kafka.core.publisher.TransferPublisher
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.{PostMapping, RequestBody, RestController}
+import org.springframework.web.bind.annotation.{
+  PostMapping,
+  RequestBody,
+  RequestMapping,
+  RestController
+}
 
-@RestController("transfer") 
+@RestController
+@RequestMapping(path = Array("/transfers"))
 class TransferController @Autowired (
     transferPublisher: TransferPublisher
 ) {

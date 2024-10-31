@@ -1,7 +1,7 @@
 package com.jmfg.training.kafka.consumer.service
 
 import com.jmfg.training.kafka.consumer.repository.{DepositRequestedEventRepository, TransferRepository, TransferRequestRepository, WithdrawalRequestedEventRepository}
-import com.jmfg.training.kafka.core.exceptions.RetryableException
+import com.jmfg.training.kafka.core.exceptions.TransferException
 import com.jmfg.training.kafka.core.model.transfer.{DepositRequestedEvent, Transfer, TransferRequest, WithdrawalRequestedEvent}
 import com.jmfg.training.kafka.core.service.TransferService
 import org.slf4j.LoggerFactory
@@ -27,7 +27,9 @@ class TransferServiceImpl @Autowired() (
       logger.info(s"Transfer with ID ${transferRequest.id} already exists.")
       return
     }
-    transferRequestRepository.save(validateTransferRequest(transferRequest))
+    transferRequestRepository.save(
+      validateTransferRequest(transferRequest)
+    )
   }
 
   override def handleDeposit(
@@ -41,12 +43,14 @@ class TransferServiceImpl @Autowired() (
   override def handleWithdrawal(
       withdrawalRequestEvent: WithdrawalRequestedEvent
   ): Unit = {
-    withdrawalRequestedEventRepository.save(withdrawalRequestEvent)
+    withdrawalRequestedEventRepository.save(
+      validateWithdrawalRequest(withdrawalRequestEvent)
+    )
     commitTransfer(withdrawalRequestEvent)
   }
 
   @Retryable(
-    retryFor = Array(classOf[RetryableException]),
+    retryFor = Array(classOf[TransferException]),
     maxAttempts = 3,
     backoff = new Backoff(delay = 2000)
   )
@@ -60,12 +64,12 @@ class TransferServiceImpl @Autowired() (
       )
     } catch {
       case e: HttpStatusCodeException =>
-        throw RetryableException("Failed to validate transfer")
+        throw TransferException("Failed to validate transfer")
     }
   }
 
   @Retryable(
-    retryFor = Array(classOf[RetryableException]),
+    retryFor = Array(classOf[TransferException]),
     maxAttempts = 4,
     backoff = new Backoff(delay = 3000)
   )
@@ -79,7 +83,26 @@ class TransferServiceImpl @Autowired() (
       )
     } catch {
       case e: HttpStatusCodeException =>
-        throw RetryableException("Failed to validate deposit")
+        throw TransferException("Failed to validate deposit")
+    }
+  }
+
+  @Retryable(
+    retryFor = Array(classOf[TransferException]),
+    maxAttempts = 5,
+    backoff = new Backoff(delay = 4000)
+  )
+  private def validateWithdrawalRequest(
+      event: WithdrawalRequestedEvent
+  ): WithdrawalRequestedEvent = {
+    try {
+      restTemplate.getForObject(
+        s"/validate/withdrawal/${event.id}",
+        classOf[WithdrawalRequestedEvent]
+      )
+    } catch {
+      case e: HttpStatusCodeException =>
+        throw TransferException("Failed to validate withdrawal")
     }
   }
 
