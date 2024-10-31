@@ -1,18 +1,8 @@
 package com.jmfg.training.kafka.consumer.service
 
-import com.jmfg.training.kafka.consumer.repository.{
-  DepositRequestedEventRepository,
-  TransferRepository,
-  TransferRequestRepository,
-  WithdrawalRequestedEventRepository
-}
+import com.jmfg.training.kafka.consumer.repository.{DepositRequestedEventRepository, TransferRepository, TransferRequestRepository, WithdrawalRequestedEventRepository}
 import com.jmfg.training.kafka.core.exceptions.RetryableException
-import com.jmfg.training.kafka.core.model.transfer.{
-  DepositRequestedEvent,
-  Transfer,
-  TransferRequest,
-  WithdrawalRequestedEvent
-}
+import com.jmfg.training.kafka.core.model.transfer.{DepositRequestedEvent, Transfer, TransferRequest, WithdrawalRequestedEvent}
 import com.jmfg.training.kafka.core.service.TransferService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -37,22 +27,22 @@ class TransferServiceImpl @Autowired() (
       logger.info(s"Transfer with ID ${transferRequest.id} already exists.")
       return
     }
-    validateTransferRequest(transferRequest)
-    transferRequestRepository.save(transferRequest)
+    transferRequestRepository.save(validateTransferRequest(transferRequest))
   }
 
   override def handleDeposit(
       depositRequestEvent: DepositRequestedEvent
   ): Unit = {
-    validateDepositRequest(depositRequestEvent)
-    depositRequestedEventRepository.save(depositRequestEvent)
+    depositRequestedEventRepository.save(
+      validateDepositRequest(depositRequestEvent)
+    )
   }
 
   override def handleWithdrawal(
       withdrawalRequestEvent: WithdrawalRequestedEvent
   ): Unit = {
-    commitTransfer(withdrawalRequestEvent)
     withdrawalRequestedEventRepository.save(withdrawalRequestEvent)
+    commitTransfer(withdrawalRequestEvent)
   }
 
   @Retryable(
@@ -62,12 +52,11 @@ class TransferServiceImpl @Autowired() (
   )
   private def validateTransferRequest(
       transferRequest: TransferRequest
-  ): Unit = {
+  ): TransferRequest = {
     try {
-      restTemplate.postForObject(
-        "/validate/transfer",
-        transferRequest,
-        classOf[Void]
+      restTemplate.getForObject(
+        s"/validate/transfer/${transferRequest.id}",
+        classOf[TransferRequest]
       )
     } catch {
       case e: HttpStatusCodeException =>
@@ -82,12 +71,11 @@ class TransferServiceImpl @Autowired() (
   )
   private def validateDepositRequest(
       event: DepositRequestedEvent
-  ): Unit = {
+  ): DepositRequestedEvent = {
     try {
-      restTemplate.postForObject(
-        "/validate/deposit",
-        event,
-        classOf[Void]
+      restTemplate.getForObject(
+        s"/validate/deposit/${event.id}",
+        classOf[DepositRequestedEvent]
       )
     } catch {
       case e: HttpStatusCodeException =>
@@ -97,7 +85,7 @@ class TransferServiceImpl @Autowired() (
 
   def commitTransfer(
       event: WithdrawalRequestedEvent
-  ): Unit = {
+  ): Transfer = {
     val transfer = new Transfer()
     transfer.id = event.id
     transfer.withdrawalRequestedEvent = event
